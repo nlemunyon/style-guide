@@ -188,6 +188,29 @@ Declarative micro-interactions:
 </motion.button>
 ```
 
+### Variant System (Vector RAG)
+
+A four-variant `Button` component with three sizes, physics micro-interactions (shared `buttonHover`/`buttonTap`), and a pill-shaped primary:
+
+```jsx
+const variants = {
+  primary:   'bg-accent text-black hover:bg-accent-hover rounded-full',       // #5c9ece → #7ab4de
+  secondary: 'bg-bg-elevated text-text-primary border border-border-default hover:border-border-hover',
+  ghost:     'text-text-secondary hover:text-text-primary hover:bg-bg-elevated',
+  danger:    'bg-error-muted text-error hover:bg-error/20',                   // #f87171 on 15% tint
+}
+const sizes = { sm: 'h-8 px-3 text-xs', md: 'h-9 px-4 text-sm', lg: 'h-11 px-6 text-sm' }
+// motion: whileHover={{ y: -1 }}  whileTap={{ scale: 0.98 }}  disabled: opacity-50 cursor-not-allowed
+```
+
+**Chat send button** — square, accent-filled, flips to a red "stop" while streaming:
+
+```jsx
+{/* idle/active */}  <button className="h-8 w-8 rounded-lg" style={{ background: '#5c9ece', color: '#000' }} />
+{/* disabled */}     style={{ background: '#1a1a1a', color: '#555' }}
+{/* streaming stop */} style={{ background: 'rgba(239,68,68,0.15)', color: '#ef4444' }}
+```
+
 ### Modal Action Buttons (Map Creator)
 
 Paired download/close buttons:
@@ -243,14 +266,14 @@ Pill-shaped filter toggles:
 
 ## Button Comparison Table
 
-| Property | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|----------|-------------|---------------|-------------|--------------|
-| Shape | Pill (25px) | — | Rounded (10px) | Pill (full) |
-| Fill | Solid color | Tailwind utility | Gradient | Solid color |
-| Hover | Darken bg | — | Lift + shadow boost | `y: -1` lift |
-| Active/Tap | — | — | — | `scale: 0.98` |
-| Shadow | None | None | Accent glow | None |
-| Disabled | — | — | `opacity: 0.6` | — |
+| Property | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|----------|-------------|---------------|-------------|--------------|------------|
+| Shape | Pill (25px) | — | Rounded (10px) | Pill (full) | Pill primary / `rounded-lg` icon |
+| Fill | Solid color | Tailwind utility | Gradient | Solid color | Solid accent (black text) |
+| Hover | Darken bg | — | Lift + shadow boost | `y: -1` lift | `y: -1` lift |
+| Active/Tap | — | — | — | `scale: 0.98` | `scale: 0.98` |
+| Shadow | None | None | Accent glow | None | None |
+| Disabled | — | — | `opacity: 0.6` | — | `opacity-50` / `#1a1a1a` bg |
 
 ## How to Apply Buttons
 
@@ -277,3 +300,4 @@ Pill-shaped filter toggles:
 - Small lift (`y: -1`) rather than large transforms
 - Scale down on tap (`0.98`) for press feedback
 - Full border-radius for pill shape
+- A four-variant system (primary / secondary / ghost / danger) × three sizes (Vector RAG) keeps CTAs, toolbars, and destructive actions visually consistent; pair the accent-filled send button with a red "stop" swap during streaming

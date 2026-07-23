@@ -59,6 +59,32 @@ input[type="text"]::placeholder {
 
 **Focus ring:** Same concept but with forest green accent and slightly subtler ring (0.1 opacity vs 0.15).
 
+### Vector RAG - Dark Input + Chat Wrapper
+
+The standalone `Input`/`TextArea` components sit on the elevated tier and switch their border to the accent on focus (the global `:focus-visible` adds the ring):
+
+```jsx
+<input className="h-9 rounded-lg bg-bg-elevated border border-border-default px-3
+                  text-sm text-text-primary placeholder:text-text-tertiary
+                  focus:border-accent outline-none transition-colors" />
+/* error state: border-error; optional label: text-xs font-medium text-text-secondary */
+```
+
+```css
+/* Global focus ring (applies to every focusable element) */
+*:focus-visible { outline: none; box-shadow: 0 0 0 3px rgba(92,158,206,0.3); border-radius: 4px; }
+```
+
+The **chat input** uses the wrapper pattern — dark-on-black, lighting its border to `#5c9ece` with a soft 2px ring on focus:
+
+```jsx
+<div className="flex items-end gap-2 rounded-xl px-4 py-2.5"
+     style={{ background: '#0d0d0d', border: '1px solid #1f1f1f' }}
+     /* focus-within: borderColor #5c9ece; boxShadow 0 0 0 2px rgba(92,158,206,0.12) */>
+  <textarea className="flex-1 resize-none bg-transparent text-sm text-text-primary" /* auto-grow → 200px */ />
+</div>
+```
+
 ### Wedding CRM - Chat Textarea
 
 ```css
@@ -304,15 +330,15 @@ Paired with a small status dot:
 
 ## Input Comparison Table
 
-| Property | Wedding CRM | Map Creator |
-|----------|-------------|-------------|
-| Border | `1px solid #ddd` | `1px solid rgba(160,170,160,0.12)` |
-| Radius | `8px` | `10px` |
-| Background | White (default) | `#1a1c1e` |
-| Focus border | `#7d8b6a` | `#7dad7d` |
-| Focus ring | `3px rgba(125,139,106,0.15)` | `3px rgba(125,173,125,0.1)` |
-| Label style | Sentence case, 500 weight | Uppercase, 600 weight, letter-spaced |
-| Placeholder | Default | `#636966` |
+| Property | Wedding CRM | Map Creator | Vector RAG |
+|----------|-------------|-------------|-----------|
+| Border | `1px solid #ddd` | `1px solid rgba(160,170,160,0.12)` | `1px solid rgba(255,255,255,0.08)` |
+| Radius | `8px` | `10px` | `8px` inputs / `12px` chat wrapper |
+| Background | White (default) | `#1a1c1e` | `#111111` inputs / `#0d0d0d` chat |
+| Focus border | `#7d8b6a` | `#7dad7d` | `#5c9ece` |
+| Focus ring | `3px rgba(125,139,106,0.15)` | `3px rgba(125,173,125,0.1)` | `3px rgba(92,158,206,0.3)` global / `2px rgba(92,158,206,0.12)` chat |
+| Label style | Sentence case, 500 weight | Uppercase, 600 weight, letter-spaced | Sentence case, `text-xs` 500 weight |
+| Placeholder | Default | `#636966` | `#606060` (text-tertiary) |
 
 ## How to Apply Forms
 
@@ -334,3 +360,4 @@ Paired with a small status dot:
 - Borderless inner textarea
 - Send button inside the wrapper
 - Auto-growing textarea with max-height cap
+- On a pure-black base (Vector RAG), pair a per-element accent focus border with a global `:focus-visible` accent ring so keyboard focus is always visible

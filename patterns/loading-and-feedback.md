@@ -37,6 +37,29 @@ Both Wedding CRM and Map Creator use CSS border-based spinners:
 
 **Pattern:** Gray border with accent-colored top segment. The accent color matches each site's palette. Larger spinners (48px) for page-level loading, smaller (12px) for inline status.
 
+### SVG Spinner (Vector RAG)
+
+Vector RAG uses an SVG arc spinner tinted with the accent, in three sizes:
+
+```jsx
+<svg className="animate-spin text-accent" /* h-4 w-4 | h-6 w-6 | h-8 w-8 */ viewBox="0 0 24 24" fill="none">
+  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />
+  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" />
+</svg>
+```
+
+### Skeleton Shimmer (Vector RAG)
+
+Dashboard cards ghost-load with a sweeping accent gradient rather than a spinner:
+
+```css
+.card::after { content: ''; /* overlays the card while .is-loading */
+  background: linear-gradient(90deg, transparent, color-mix(in srgb, var(--accent) 9%, transparent), transparent);
+  animation: ghostSweep 1.25s ease-in-out infinite;
+}
+@keyframes ghostSweep { from { transform: translateX(-100%); } to { transform: translateX(100%); } }
+```
+
 ## Progress Bars
 
 ### Map Creator - Poster Generation
@@ -146,6 +169,14 @@ The progress bar sits inside a status overlay that covers the preview container.
 | Scale range | 0.8 → 1.0 | 1.0 → 1.1 |
 | Stagger delay | 0.15s | 0.2s |
 
+### Word Bounce + Streaming Caret (Vector RAG)
+
+Vector RAG skips dots entirely. Its "thinking" state is a single word that fades in and bounces on the y-axis (`role="status"`, `aria-live="polite"`, `text-base` `#e0e0e0`); once tokens actually stream, it renders a pulsing caret at the tail of the text instead:
+
+```jsx
+<span className="inline-block w-1.5 h-4 bg-accent animate-pulse" />
+```
+
 ## Status Messages
 
 ### Inline Status (Wedding CRM Chat)
@@ -220,6 +251,16 @@ Full-width alert banners:
 /* 2s ease-in-out infinite — subtle loading/processing indicator */
 ```
 
+### Vector RAG - Expanding Ping
+
+```css
+@keyframes ap2ping {
+  0%        { box-shadow: 0 0 0 0  color-mix(in srgb, var(--pc) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 11px transparent; }
+}
+/* fresh events: 2.6s ease-out infinite · live/streaming dot (--neg #f87171): 2s */
+```
+
 ### Wedding CRM - Chat Toggle Ring
 
 ```css
@@ -253,3 +294,4 @@ Full-width alert banners:
 - Pulse glow animation on data indicators
 - Small green status dot for connection health
 - Stale data warnings when cache is outdated
+- Expanding-ring "ping" (Vector RAG `ap2ping`) on fresh map events and the live streaming dot; ghost-sweep skeletons for whole cards while their data loads

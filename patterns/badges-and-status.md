@@ -74,6 +74,37 @@ Muted-opacity backgrounds with bright text:
 
 **Pattern:** 15% opacity of the semantic color as background, full-brightness color as text. The `inline-flex` + `gap` allows pairing text with icons or dots.
 
+## Dark Mode Badges (Vector RAG)
+
+Vector RAG's `Badge` component follows the same 15%-opacity recipe as Not A Doc AI, with five variants and an optional leading dot:
+
+```jsx
+const variants = {
+  default: 'bg-bg-elevated text-text-secondary',
+  accent:  'bg-accent-muted text-accent',      // rgba(92,158,206,0.15) / #5c9ece
+  success: 'bg-success-muted text-success',     // #4ade80
+  warning: 'bg-warning-muted text-warning',     // #fbbf24
+  error:   'bg-error-muted text-error',         // #f87171
+}
+// base: rounded-full px-3 py-0.5 text-xs font-medium; optional <span> dot in the same color
+```
+
+A specialized variant is the **document-index badge** on retrieved sources: `h-5 w-5 rounded-md bg-accent-muted text-xs font-medium text-accent`.
+
+### Severity Dots (Vector RAG Dashboard)
+
+Alert rows and map markers encode severity with a small filled circle (reusing the semantic triad):
+
+```css
+.alert-dot { width: 7px; height: 7px; border-radius: 50%; }
+.alert-dot.high   { background: #f87171; }   /* --neg  */
+.alert-dot.medium { background: #fbbf24; }   /* --warn */
+.alert-dot.low    { background: #4ade80; }   /* --pos  */
+
+/* Live "streaming" indicator */
+.live-dot { background: #f87171; animation: ap2ping 2s ease-out infinite; }
+```
+
 ## Stack Count Badge (Map Creator)
 
 Badge showing number of items in a gallery stack:
@@ -168,13 +199,13 @@ Tiny dot indicating connection state:
 
 ## Badge Comparison Table
 
-| Property | Wedding CRM (Light) | Not A Doc AI (Dark) | Map Creator |
-|----------|---------------------|---------------------|-------------|
-| Background | Pastel tint | 15% opacity accent | Solid accent |
-| Text | Dark tint | Bright accent | Dark bg color |
-| Radius | `20px` | `100px` (full pill) | `12px` |
-| Size | `0.75rem` | `0.75rem` | `0.85rem` |
-| Weight | 500 | 500 | 600 |
+| Property | Wedding CRM (Light) | Not A Doc AI (Dark) | Map Creator | Vector RAG (Dark) |
+|----------|---------------------|---------------------|-------------|-------------------|
+| Background | Pastel tint | 15% opacity accent | Solid accent | 15% opacity accent |
+| Text | Dark tint | Bright accent | Dark bg color | Bright accent |
+| Radius | `20px` | `100px` (full pill) | `12px` | `100px` (full pill) |
+| Size | `0.75rem` | `0.75rem` | `0.85rem` | `0.75rem` (`text-xs`) |
+| Weight | 500 | 500 | 600 | 500 |
 
 ## How to Apply Badges
 

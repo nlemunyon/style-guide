@@ -78,6 +78,32 @@ Similar to DailyBrief but with slightly larger radius and padding:
 
 **Characteristics:** Larger 20px radius for softer feel. Hover brightens border without accent color. More generous padding than DailyBrief.
 
+### Dual-Radius Cards (Vector RAG)
+
+Vector RAG runs two card systems in one app. General UI cards echo Not A Doc AI (soft `20px`, border-only, no shadow); dashboard panels tighten to a crisp `8px` with a faint lift-shadow so they read against the pure-black base:
+
+```jsx
+/* UI card (chat, modals, sources) */
+<div className="rounded-[20px] bg-bg-surface border border-border-default p-5
+                transition-colors hover:border-border-hover">   {/* #0a0a0a / 8% border */}
+```
+
+```css
+/* Dashboard panel */
+.ap2-dash .card {
+  background: var(--panel);            /* #0a0a0a */
+  border: 1px solid var(--line);       /* rgba(255,255,255,0.08) */
+  border-radius: var(--r);             /* 8px */
+  box-shadow: var(--shadow);           /* 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(0,0,0,.3) */
+}
+.ap2-dash .card-head {                 /* 12px 16px, divider below */
+  padding: 12px var(--pad);
+  border-bottom: 1px solid var(--line-2);
+}
+```
+
+**Characteristics:** `20px` for calm chat surfaces, `8px` for the dense analytical grid — the shared token palette keeps them feeling like one product.
+
 ### Glass Card (Map Creator)
 
 Translucent card with backdrop blur:
@@ -199,15 +225,15 @@ Compact centered stats for dashboard summaries:
 
 ## Card Comparison Table
 
-| Property | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|----------|-------------|---------------|-------------|--------------|
-| Background | `#ffffff` | `#141414` | `rgba(255,255,255,0.03)` | `#141414` |
-| Border | None | `1px rgba(255,255,255,0.05)` | `1px rgba(160,170,160,0.12)` | `1px rgba(255,255,255,0.05)` |
-| Radius | `12px` | `12px` | `16-18px` | `20px` |
-| Padding | `1.5rem` | `1rem` | `24px` | `1.25rem` |
-| Shadow | `0 2px 10px rgba(0,0,0,0.05)` | None | None | None |
-| Hover effect | — | Border accent glow | `translateY(-8px)` | Border brightens |
-| Glass | No | No | Yes (`backdrop-filter`) | No |
+| Property | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|----------|-------------|---------------|-------------|--------------|------------|
+| Background | `#ffffff` | `#141414` | `rgba(255,255,255,0.03)` | `#141414` | `#0a0a0a` |
+| Border | None | `1px rgba(255,255,255,0.05)` | `1px rgba(160,170,160,0.12)` | `1px rgba(255,255,255,0.05)` | `1px rgba(255,255,255,0.08)` |
+| Radius | `12px` | `12px` | `16-18px` | `20px` | `20px` UI / `8px` dash |
+| Padding | `1.5rem` | `1rem` | `24px` | `1.25rem` | `1.25rem` UI / `16px` dash |
+| Shadow | `0 2px 10px rgba(0,0,0,0.05)` | None | None | None | None UI / `0 1px 2px rgba(0,0,0,.5)` dash |
+| Hover effect | — | Border accent glow | `translateY(-8px)` | Border brightens | Border brightens |
+| Glass | No | No | Yes (`backdrop-filter`) | No | Only on dash map/network overlays |
 
 ## How to Apply Cards
 
@@ -234,3 +260,4 @@ Compact centered stats for dashboard summaries:
 - Larger 20px radius for friendly, approachable feel
 - Subtle border that brightens on hover
 - No shadow — depth comes from background tier
+- If the same app also hosts a dense dashboard (Vector RAG), run a second tighter card system (8px radius, faint lift-shadow) but keep the shared token palette so both read as one product

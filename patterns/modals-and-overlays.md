@@ -11,8 +11,9 @@ Status overlays, guide modals, image modals, expanded views, and overlay backdro
 | Expanded gallery | 95% | Black | Map Creator |
 | Status overlay | 95% | `#141517` | Map Creator |
 | Chat fullscreen | 100% | White | Wedding CRM |
+| Modal | 60% + `blur(4px)` | Black | Vector RAG |
 
-**Pattern:** Dark-mode sites use very high opacity (95%) backdrops that match the dark aesthetic. Light-mode uses moderate opacity (50%) to dim content while keeping it visible.
+**Pattern:** Dark-mode sites use very high opacity (95%) backdrops that match the dark aesthetic. Light-mode uses moderate opacity (50%) to dim content while keeping it visible. Vector RAG is the outlier — a moderate 60% backdrop paired with a `backdrop-filter: blur(4px)` frost, so context stays legible behind the dialog.
 
 ## Guide Modal (Wedding CRM)
 
@@ -259,6 +260,27 @@ Highlighted example blocks within the guide modal:
 
 **Pattern:** Left border accent for callout blocks. Example boxes use the primary accent, limitation boxes use a muted variant.
 
+## Frosted Modal (Vector RAG)
+
+A Framer Motion dialog: a blurred 60% backdrop with a scale-and-lift content entrance. The `Modal` component clicks-outside to close and scales content in over 0.2s:
+
+```jsx
+{/* Overlay */}
+<motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+  transition={{ duration: 0.15 }} className="fixed inset-0 z-50 flex items-center justify-center"
+  style={{ backgroundColor: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)' }}>
+
+  {/* Content */}
+  <motion.div initial={{ opacity: 0, scale: 0.97, y: 8 }} animate={{ opacity: 1, scale: 1, y: 0 }}
+    exit={{ opacity: 0, scale: 0.97, y: 8 }} transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
+    className="rounded-[20px] bg-bg-surface border border-border-default p-6"  /* max-w 480px default */>
+    {/* Close: h-8 w-8 rounded-lg, #606060 → #e8e8e8 on #1a1a1a hover */}
+  </motion.div>
+</motion.div>
+```
+
+A large **content modal** variant (the Data Guide) fills the viewport instead — `95vw × 92vh`, `#000000` bg, `1px solid #1f1f1f`, `12px` radius, with an internally scrolling body.
+
 ## Toggle States
 
 ### Modal Toggle Pattern
@@ -308,3 +330,9 @@ Three states: hidden (default), open (widget), expanded (fullscreen).
 - Scrollable content with generous padding
 - Accent-colored section headers
 - Field reference tables with accent-colored header rows
+
+### For a dark AI/analyst app (Vector RAG):
+- Moderate 60% backdrop + `backdrop-filter: blur(4px)` so context stays readable
+- Scale-and-lift content entrance (Framer Motion, `scale 0.97→1` + `y 8→0`, 0.2s)
+- `20px`-radius surface card on the elevated tier; click-outside + Escape to close
+- For dense reference content, a near-fullscreen (`95vw × 92vh`) variant with its own scroll region

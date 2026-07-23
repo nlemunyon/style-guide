@@ -93,6 +93,24 @@ Tables rendered inside chat message bubbles:
 
 **Characteristics:** Full borders (all sides) for clarity in chat context. Striped rows for readability. Smaller font (13px) to fit within message width.
 
+### Chat Markdown Table (Vector RAG)
+
+Tables rendered inside assistant answers — bottom-border rows with a faint header fill and zebra striping tuned for the dark surface:
+
+```css
+.markdown th {
+  background: rgba(255,255,255,0.04);
+  font-size: 0.875rem; font-weight: 600;
+  padding: 8px 12px; border-bottom: 1px solid #2a2a2a;
+}
+.markdown td { padding: 8px 12px; color: #bbb; border-bottom: 1px solid rgba(255,255,255,0.05); }
+.markdown tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+.markdown tr:hover { background: rgba(255,255,255,0.04); }
+/* outer table border: 1px solid #333 */
+```
+
+**Characteristics:** Unlike Wedding CRM's fully-bordered chat tables, Vector RAG uses bottom-borders + zebra striping (like the dashboard tables) for a lighter, more data-dense read.
+
 ### Guide Table (Wedding CRM)
 
 Styled tables inside the user guide modal:
@@ -215,16 +233,29 @@ Ranked lists for event types, trending actors, and recent events:
 - Truncated text with ellipsis for long names
 - Top 10 items shown by default
 
+## Rank-Bar Lists (Vector RAG)
+
+The dashboard's ranking widgets are a grid-aligned bar list — label, an inline `7px` accent bar on a `--hi` track, and a mono value:
+
+```css
+.rank-row  { display: grid; grid-template-columns: minmax(0,1.4fr) 1.6fr auto; align-items: center; }
+.rank-bar  { height: 7px; border-radius: 4px; background: var(--hi); }          /* #1a1a1a track */
+.rank-bar > i { display: block; height: 100%; border-radius: 4px; background: var(--accent); }
+.rank-val  { font-family: var(--font-mono); font-size: 13px; font-weight: 600; text-align: right; }
+```
+
+Used three-up in the analysis row (fatalities by country, event-type mix, conflict dyads) and for actor activity — a denser cousin of DailyBrief's leaderboard. Alerts and history rows likewise use bottom-border `1px var(--line-2)` separators rather than full borders.
+
 ## Table Comparison
 
-| Property | Wedding CRM | DailyBrief.AI | Chat Tables |
-|----------|-------------|---------------|-------------|
-| Borders | Bottom only (`#eee`) | Bottom only (5% white) | All sides (`#e5e7eb`) |
-| Header style | Uppercase, gray | Uppercase, secondary | Bold, light bg |
-| Hover | `#fafafa` | 2% white | — |
-| Font size | Default | Compact | 13px |
-| Striping | No | No | Even rows |
-| Radius | None | None | 8px container |
+| Property | Wedding CRM | DailyBrief.AI | Chat Tables | Vector RAG |
+|----------|-------------|---------------|-------------|-----------|
+| Borders | Bottom only (`#eee`) | Bottom only (5% white) | All sides (`#e5e7eb`) | Bottom only + `1px #333` outer |
+| Header style | Uppercase, gray | Uppercase, secondary | Bold, light bg | Bold, `4%` white fill |
+| Hover | `#fafafa` | 2% white | — | `4%` white |
+| Font size | Default | Compact | 13px | `text-sm` |
+| Striping | No | No | Even rows | Even rows (`2%` white) |
+| Radius | None | None | 8px container | None (rank cards `8px`) |
 
 ## How to Apply Tables
 
@@ -251,3 +282,9 @@ Ranked lists for event types, trending actors, and recent events:
 - Each item: fade in + slide up 6px
 - Keep durations at 200ms with deceleration easing
 - Works for any list: orders, results, notifications
+- Vector RAG uses the identical `staggerContainer(0.04)` + `listItem` variants
+
+### For dashboard rankings:
+- Grid-align label · inline bar · mono value (Vector RAG rank-row)
+- 7px accent bar on a dark track, `4px` radius
+- Bottom-border separators (not full borders) for alert/history rows

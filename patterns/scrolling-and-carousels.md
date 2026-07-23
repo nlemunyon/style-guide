@@ -126,15 +126,27 @@ A gradient overlay creates a fade-to-background effect at the bottom:
 
 **Strategy:** Transparent track (fully invisible). Semi-transparent thumb. Subtler hover brightening.
 
+### Vector RAG
+
+```css
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.12); border-radius: 100px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255, 255, 255, 0.22); }
+```
+
+**Strategy:** The narrowest of the three (6px), transparent track, faint 12% thumb brightening to 22% — tuned to nearly disappear against the pure-black base until needed.
+
 ### Comparison
 
-| Property | DailyBrief.AI | Not A Doc AI |
-|----------|---------------|--------------|
-| Track | `#0a0a0a` (solid) | `transparent` |
-| Thumb default | `#1a1a1a` | `rgba(255,255,255,0.15)` |
-| Thumb hover | `#a3a3a3` | `rgba(255,255,255,0.25)` |
-| Radius | `9999px` | `100px` |
-| Visibility at rest | Very low | Low |
+| Property | DailyBrief.AI | Not A Doc AI | Vector RAG |
+|----------|---------------|--------------|-----------|
+| Width | `8px` | `8px` | `6px` |
+| Track | `#0a0a0a` (solid) | `transparent` | `transparent` |
+| Thumb default | `#1a1a1a` | `rgba(255,255,255,0.15)` | `rgba(255,255,255,0.12)` |
+| Thumb hover | `#a3a3a3` | `rgba(255,255,255,0.25)` | `rgba(255,255,255,0.22)` |
+| Radius | `9999px` | `100px` | `100px` |
+| Visibility at rest | Very low | Low | Very low |
 
 ## Chat Auto-Scroll
 
@@ -149,7 +161,7 @@ function scrollToBottom() {
 // Called after message append and typing indicator show
 ```
 
-For Not A Doc AI (React), the pattern uses a ref:
+For Not A Doc AI **and Vector RAG** (both React), the pattern uses a ref:
 
 ```jsx
 const messagesEndRef = useRef(null)
@@ -161,6 +173,8 @@ useEffect(() => {
 // In JSX:
 <div ref={messagesEndRef} />
 ```
+
+Vector RAG owns every scroll region explicitly (`html, body, #root { overflow: hidden }`), so the message list is a dedicated `flex-1 overflow-y-auto` column and each sidebar scrolls independently.
 
 ## Chat Sessions List Scroll (Wedding CRM)
 
