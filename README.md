@@ -1,6 +1,6 @@
 # Style Guide
 
-Design system documentation for four production web applications. Each app has a distinctive aesthetic — from warm organic CRMs to ultra-dark intelligence dashboards. This repo captures the design decisions, tokens, and component patterns in enough detail for a designer or developer to apply them to entirely different project types.
+Design system documentation for five production web applications. Each app has a distinctive aesthetic — from warm organic CRMs to ultra-dark intelligence dashboards. This repo captures the design decisions, tokens, and component patterns in enough detail for a designer or developer to apply them to entirely different project types.
 
 ## Who This Is For
 
@@ -8,7 +8,7 @@ Design system documentation for four production web applications. Each app has a
 - **Developers** building new apps that should feel consistent with an existing site
 - **Anyone** who wants to understand the "why" behind each design system
 
-## The Four Sites
+## The Five Sites
 
 | Site | Identity | Background | Accent | Mode |
 |------|----------|-----------|--------|------|
@@ -16,12 +16,13 @@ Design system documentation for four production web applications. Each app has a
 | [DailyBrief.AI](sites/dailybrief.md) | Ultra-dark intelligence dashboard | ![](https://via.placeholder.com/12/0a0a0a/0a0a0a.png) `#0a0a0a` | ![](https://via.placeholder.com/12/3b82f6/3b82f6.png) `#3b82f6` Blue | Dark |
 | [Map Creator](sites/map-creator.md) | Nature-inspired creative tool | ![](https://via.placeholder.com/12/141517/141517.png) `#141517` | ![](https://via.placeholder.com/12/7dad7d/7dad7d.png) `#7dad7d` Forest Green | Dark |
 | [Not A Doc AI](sites/not-a-doc-ai.md) | Modern AI chat + data interface | ![](https://via.placeholder.com/12/0a0a0a/0a0a0a.png) `#0a0a0a` | ![](https://via.placeholder.com/12/3b82f6/3b82f6.png) `#3b82f6` Blue | Dark |
+| [Vector RAG](sites/vector-rag.md) | Animated-map intel chat + live dashboard | ![](https://via.placeholder.com/12/000000/000000.png) `#000000` | ![](https://via.placeholder.com/12/5c9ece/5c9ece.png) `#5c9ece` Blue | Dark |
 
 ## How to Navigate
 
 **By site** — Start with the [sites/](sites/) folder for a complete deep-dive into any single application's design system.
 
-**By pattern** — Use the [patterns/](patterns/) folder to see how cards, buttons, navigation, or other components are handled across all four sites.
+**By pattern** — Use the [patterns/](patterns/) folder to see how cards, buttons, navigation, or other components are handled across all five sites.
 
 **By foundation** — The [foundations/](foundations/) folder covers cross-cutting design tokens (color, typography, spacing, shadows) with side-by-side comparisons.
 
@@ -29,18 +30,18 @@ Design system documentation for four production web applications. Each app has a
 
 ## Design System Comparison Matrix
 
-| Property | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|----------|-------------|---------------|-------------|--------------|
-| Background | `#f5f7f3` | `#0a0a0a` | `#141517` | `#0a0a0a` |
-| Surface | `#ffffff` | `#141414` | `rgba(255,255,255,0.03)` | `#141414` |
-| Accent | `#7d8b6a` | `#3b82f6` | `#7dad7d` | `#3b82f6` |
-| Accent Gradient | `135deg #667756→#3d4d2f` | None (flat) | `135deg #5c8a5c→#9dc49d` | None (flat) |
-| Font (Body) | System stack | Inter | Inter | Inter |
-| Font (Mono) | `ui-monospace` | JetBrains Mono | — | JetBrains Mono |
-| Border Radius | `25px` pills, `12px` cards | `12px` cards | `16-18px` cards, `10px` inputs | `20px` cards, `24px` bubbles |
-| Animation Library | CSS transitions | CSS + Tailwind keyframes | CSS transitions | Framer Motion |
-| Border Strategy | None (shadow-based) | `1px rgba(255,255,255,0.05)` | `1px rgba(160,170,160,0.12)` | `1px rgba(255,255,255,0.05)` |
-| Mode | Light | Dark | Dark | Dark |
+| Property | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|----------|-------------|---------------|-------------|--------------|------------|
+| Background | `#f5f7f3` | `#0a0a0a` | `#141517` | `#0a0a0a` | `#000000` |
+| Surface | `#ffffff` | `#141414` | `rgba(255,255,255,0.03)` | `#141414` | `#0a0a0a` |
+| Accent | `#7d8b6a` | `#3b82f6` | `#7dad7d` | `#3b82f6` | `#5c9ece` |
+| Accent Gradient | `135deg #667756→#3d4d2f` | None (flat) | `135deg #5c8a5c→#9dc49d` | None (flat) | None (flat) |
+| Font (Body) | System stack | Inter | Inter | Inter | Inter (self-hosted) |
+| Font (Mono) | `ui-monospace` | JetBrains Mono | — | JetBrains Mono | JetBrains Mono (self-hosted) |
+| Border Radius | `25px` pills, `12px` cards | `12px` cards | `16-18px` cards, `10px` inputs | `20px` cards, `24px` bubbles | `20px` cards, `24px` bubbles, `8px` panels |
+| Animation Library | CSS transitions | CSS + Tailwind keyframes | CSS transitions | Framer Motion | Framer Motion + SVG |
+| Border Strategy | None (shadow-based) | `1px rgba(255,255,255,0.05)` | `1px rgba(160,170,160,0.12)` | `1px rgba(255,255,255,0.05)` | `1px rgba(255,255,255,0.08)` |
+| Mode | Light | Dark | Dark | Dark | Dark |
 
 ## Table of Contents
 
@@ -49,6 +50,7 @@ Design system documentation for four production web applications. Each app has a
 - [DailyBrief.AI](sites/dailybrief.md) — Ultra-dark intelligence dashboard
 - [Map Creator](sites/map-creator.md) — Nature-inspired creative tool
 - [Not A Doc AI](sites/not-a-doc-ai.md) — Modern AI chat + data interface
+- [Vector RAG](sites/vector-rag.md) — Dark intel chat with animated world-map landing + live dashboard
 
 ### Foundations
 - [Color](foundations/color.md) — Palettes, semantics, opacity scales
