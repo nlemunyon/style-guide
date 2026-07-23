@@ -1,21 +1,21 @@
 # Shadows & Depth
 
-Shadow systems, glass effects, layered depth, and glow effects across all four sites.
+Shadow systems, glass effects, layered depth, and glow effects across all five sites.
 
 ## Shadow Comparison
 
-| Purpose | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|---------|-------------|---------------|-------------|--------------|
-| Card default | `0 2px 10px rgba(0,0,0,0.05)` | None (border-only) | None (border-only) | None (border-only) |
-| Card hover | — | Border brightens | Border + `translateY(-8px)` | Border brightens |
-| Stat box | `0 1px 3px rgba(0,0,0,0.1)` | — | — | — |
-| Chat widget | `0 20px 60px rgba(0,0,0,0.15)` | — | — | — |
-| Button glow | — | — | `0 4px 20px rgba(125,173,125,0.3)` | — |
-| Accent glow | — | `0 0 20px rgba(59,130,246,0.2)` | `0 0 20px rgba(125,173,125,0.3)` | `0 0 20px rgba(59,130,246,0.2)` |
-| Expanded hover | — | — | `0 20px 40px rgba(0,0,0,0.3)` | — |
-| Chat toggle | `0 4px 20px rgba(74,90,58,0.4)` | — | — | — |
+| Purpose | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|---------|-------------|---------------|-------------|--------------|------------|
+| Card default | `0 2px 10px rgba(0,0,0,0.05)` | None (border-only) | None (border-only) | None (border-only) | Dash: `0 1px 2px rgba(0,0,0,.5)`; UI cards: border-only |
+| Card hover | — | Border brightens | Border + `translateY(-8px)` | Border brightens | Border brightens (8%→14%) |
+| Stat box | `0 1px 3px rgba(0,0,0,0.1)` | — | — | — | — |
+| Chat widget | `0 20px 60px rgba(0,0,0,0.15)` | — | — | — | — |
+| Button glow | — | — | `0 4px 20px rgba(125,173,125,0.3)` | — | — |
+| Accent glow | — | `0 0 20px rgba(59,130,246,0.2)` | `0 0 20px rgba(125,173,125,0.3)` | `0 0 20px rgba(59,130,246,0.2)` | `0 0 20px rgba(92,158,206,0.2)` |
+| Expanded hover | — | — | `0 20px 40px rgba(0,0,0,0.3)` | — | — |
+| Chat toggle | `0 4px 20px rgba(74,90,58,0.4)` | — | — | — | — |
 
-**Pattern:** Light-mode (Wedding CRM) relies on traditional box-shadows for depth. Dark-mode sites avoid shadows on cards (they'd disappear into the dark background) and instead use borders with subtle opacity changes. Glows and accent shadows create visual hierarchy in dark mode.
+**Pattern:** Light-mode (Wedding CRM) relies on traditional box-shadows for depth. Dark-mode sites avoid shadows on cards (they'd disappear into the dark background) and instead use borders with subtle opacity changes. Glows and accent shadows create visual hierarchy in dark mode. Vector RAG is a hybrid: general UI cards are border-only (like the other dark sites), but its dashboard panels add a faint `0 1px 2px rgba(0,0,0,.5)` shadow to lift cards off the pure-black base where a border alone reads too subtly.
 
 ## Depth Strategies by Mode
 
@@ -56,6 +56,29 @@ border: 1px solid rgba(255, 255, 255, 0.1);
 /* Level 4: Accent highlight */
 border-color: rgba(59, 130, 246, 0.3);
 box-shadow: 0 0 20px rgba(59, 130, 246, 0.2);  /* glow */
+```
+
+### Pure-Black Four-Tier (Vector RAG)
+
+Vector RAG starts from `#000000` and climbs four luminance steps, with borders one notch stronger than the other dark sites (8% vs 5%) so edges survive the black base:
+
+```css
+/* Level 1: Page background */
+background: #000000;
+
+/* Level 2: Card surface */
+background: #0a0a0a;
+border: 1px solid rgba(255, 255, 255, 0.08);
+
+/* Level 3: Elevated (inputs, sidebar items) */
+background: #111111;
+
+/* Level 4: Active / hover */
+background: #1a1a1a;
+
+/* Accent highlight (focus, active send) */
+border-color: #5c9ece;
+box-shadow: 0 0 0 3px rgba(92, 158, 206, 0.3);  /* focus ring */
 ```
 
 ### Dark Mode with Glass (Map Creator)
@@ -182,11 +205,13 @@ The chat toggle uses a pulsing ring animation for attention:
 
 ## Overlay Backgrounds
 
-| Overlay | Wedding CRM | Map Creator | Not A Doc AI |
-|---------|-------------|-------------|--------------|
-| Modal backdrop | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.95)` | — |
-| Status overlay | — | `rgba(20,21,23,0.95)` | — |
-| Banner fade | — | `linear-gradient(to bottom, transparent 50%, rgba(20,21,23,0.9) 100%)` | — |
+| Overlay | Wedding CRM | Map Creator | Not A Doc AI | Vector RAG |
+|---------|-------------|-------------|--------------|------------|
+| Modal backdrop | `rgba(0,0,0,0.5)` | `rgba(0,0,0,0.95)` | — | `rgba(0,0,0,0.6)` + `blur(4px)` |
+| Status overlay | — | `rgba(20,21,23,0.95)` | — | — |
+| Banner fade | — | `linear-gradient(to bottom, transparent 50%, rgba(20,21,23,0.9) 100%)` | — | — |
+
+Vector RAG is the only site pairing a moderate `60%` black backdrop with a `backdrop-filter: blur(4px)` frost — and it reuses that same glass recipe (`color-mix(panel 88%, transparent)` + `blur(4px)`) on dashboard map/network zoom controls and tooltips.
 
 **Pattern:** Light-mode overlays use moderate opacity (50%) to dim content. Dark-mode overlays use very high opacity (95%) for a near-opaque backdrop that matches the dark aesthetic.
 
@@ -203,6 +228,18 @@ Not A Doc AI defines shadows as reusable design tokens:
 ```
 
 This token approach makes it easy to maintain consistent shadows across components and swap shadow systems for different themes.
+
+Vector RAG mirrors the same three-token idea (darker, for its pure-black base) plus a scoped dashboard shadow:
+
+```js
+// theme/tokens.ts
+shadows = {
+  soft:   '0 2px 8px rgba(0, 0, 0, 0.3)',
+  softLg: '0 4px 16px rgba(0, 0, 0, 0.4)',
+  glow:   '0 0 20px rgba(92, 158, 206, 0.2)',
+}
+// dashboard.css: --shadow: 0 1px 2px rgba(0,0,0,.5), 0 1px 0 rgba(0,0,0,.3);
+```
 
 ## How to Build Your Depth System
 

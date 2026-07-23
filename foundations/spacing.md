@@ -1,6 +1,6 @@
 # Spacing
 
-Container widths, padding scales, grid systems, and information density across all four sites.
+Container widths, padding scales, grid systems, and information density across all five sites.
 
 ## Container Widths
 
@@ -10,6 +10,7 @@ Container widths, padding scales, grid systems, and information density across a
 | DailyBrief.AI | Full width | Sidebar + content | Fixed sidebar, fluid content |
 | Map Creator | `1400px` | `0 24px` | Wider container for gallery |
 | Not A Doc AI | Full width | Per-panel | Split-panel layout |
+| Vector RAG | `max-w-7xl` chat / full-width dash | `16px` (dash `--pad`) | Centered chat column + full-bleed dashboard grid |
 
 ### Container CSS
 
@@ -68,6 +69,18 @@ The dashboard uses various grid configurations per page section:
 - **Crisis monitor:** 2-column for choropleth maps
 - **News sections:** Full-width with internal tabs
 
+### Vector RAG - Fixed-Ratio Dashboard Grids
+
+The dashboard composes three named grids, all sharing a `14px` (`--gap`) gutter:
+
+```css
+.grid-main     { display: grid; gap: 14px; grid-template-columns: 440px 1fr 320px; }  /* brief · map · alerts */
+.grid-bottom   { display: grid; gap: 14px; grid-template-columns: 1.25fr 1fr 1fr; }    /* time-series · actors · sentiment */
+.grid-analysis { display: grid; gap: 14px; grid-template-columns: repeat(3, 1fr); }    /* three rank-bar cards */
+```
+
+Fixed pixel rails (`440px` / `320px`) flank a fluid `1fr` center so the map always claims the slack. The chat side, by contrast, uses no grid — a single `max-w-7xl` centered column with toggleable `280px` / `400px` sidebars.
+
 ### Map Creator - Two-Column + Gallery
 
 ```css
@@ -117,8 +130,9 @@ The dashboard uses various grid configurations per page section:
 | DailyBrief.AI | `1rem` (16px) | `1rem` | `12px` |
 | Map Creator | `24px` | `24px` | `16-18px` |
 | Not A Doc AI | `1.25rem` (20px) | — | `20px` |
+| Vector RAG | `16px` (dash) / `20px` (UI cards) | `14px` (dash) | `8px` dash · `20px` UI cards |
 
-**Pattern:** The data-dense dashboard (DailyBrief) uses tighter padding. The creative tool (Map Creator) and CRM use more generous spacing. Not A Doc AI falls in between.
+**Pattern:** The data-dense dashboards (DailyBrief, Vector RAG) use tighter `16px` padding; Vector RAG additionally drops its dashboard card radius to `8px` for a crisp analytical grid while keeping `20px` on general UI cards. The creative tool (Map Creator) and CRM use more generous spacing. Not A Doc AI falls in between.
 
 ## Section Spacing
 
@@ -130,12 +144,14 @@ The dashboard uses various grid configurations per page section:
 
 ## Information Density Comparison
 
-| Metric | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|--------|-------------|---------------|-------------|--------------|
-| Density | Medium | High | Medium | Low |
-| Primary use | Tables + cards | Charts + KPIs + maps | Form + gallery | Chat + panels |
-| Whitespace | Generous | Moderate | Moderate | Generous |
-| Items per row | 2-4 | 4-6 | 2 (main), auto-fill (gallery) | 1-2 panels |
+| Metric | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|--------|-------------|---------------|-------------|--------------|------------|
+| Density | Medium | High | Medium | Low | Low (chat) / High (dashboard) |
+| Primary use | Tables + cards | Charts + KPIs + maps | Form + gallery | Chat + panels | Chat + panels, and charts + maps + networks |
+| Whitespace | Generous | Moderate | Moderate | Generous | Generous (chat) / Moderate (dashboard) |
+| Items per row | 2-4 | 4-6 | 2 (main), auto-fill (gallery) | 1-2 panels | 1-2 (chat) / 3 (dashboard rows) |
+
+**Pattern:** Vector RAG is two densities in one app — a calm, generous chat surface and a tight, information-rich dashboard — unified only by the shared token palette.
 
 ## Chat Widget Dimensions
 
@@ -170,6 +186,25 @@ Wedding CRM defines precise chat dimensions that transition between two modes:
     height: calc(100vh - 80px);
   }
 }
+```
+
+## Full-Page Chat Dimensions (Vector RAG)
+
+Where Wedding CRM is a floating widget, Vector RAG is a full-page chat that owns the viewport (`html, body, #root { height: 100%; overflow: hidden }` — the app manages every scroll region):
+
+```css
+/* Fixed header */
+header { height: 56px; }                      /* h-14, border-bottom 1px #1f1f1f */
+
+/* Centered message column */
+.messages-inner { max-width: 80rem; }         /* max-w-7xl */
+
+/* Toggleable sidebars (animated width, not breakpoint-driven) */
+.history-sidebar   { width: 280px; }          /* left  — collapses to 0 */
+.documents-sidebar { width: 400px; }          /* right — collapses to 0 */
+
+/* Input bar */
+.chat-input { padding: 12px 16px; }           /* px-4 py-3, textarea auto-grows to 200px max */
 ```
 
 ## Stat Box Layout

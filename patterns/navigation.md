@@ -91,6 +91,35 @@ The top navbar includes mode toggle and filter controls:
 - **Height:** h-16 (64px)
 - Filters hide in "simple" mode for a cleaner view
 
+### Header Tab Bar (Vector RAG)
+
+A single `56px` (`h-14`) top header on pure black with a `1px solid #1f1f1f` bottom rule — no left rail. Wordmark + inline tab nav on the left, language + user menu on the right.
+
+```jsx
+{/* Wordmark: text-lg font-semibold */}
+<h1 style={{ color: '#85d5f7' }}>Vector <span style={{ color: '#5ba8d4' }}>RAG</span></h1>
+
+{/* Tabs: active = subtle raised chip */}
+<button className="rounded-md px-3 py-1.5 text-sm text-text-primary"
+        style={{ backgroundColor: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.08)' }}>
+  Dashboard
+</button>
+<button className="rounded-md px-3 py-1.5 text-sm text-text-tertiary hover:text-text-secondary transition-colors">
+  Chat
+</button>
+```
+
+The **user menu** button is transparent with a `1px solid #1f1f1f` border that turns `#5c9ece` with a `rgba(92,158,206,0.08)` fill on hover; its dropdown is `#0d0d0d` / `1px solid #1f1f1f`, `min-w-[140px]`, items `text-xs` hovering to `rgba(255,255,255,0.05)`.
+
+### Collapsible Chat Sidebars (Vector RAG)
+
+Two independent, **user-toggled** panels flank the chat (not breakpoint-driven), each animating width + opacity over `0.25s` ease `[0,0,0.2,1]`:
+
+- **History (left, 280px):** conversation rows `px-2 py-2 rounded-lg`; active `bg-bg-elevated text-text-primary`; idle `text-text-secondary` → hover `bg-bg-elevated/50`; a delete button (`text-error bg-error-muted` on hover) reveals per-row.
+- **Documents (right, 400px):** retrieved source blocks `bg-bg-elevated border rounded-xl px-3 py-2.5` with an accent index badge.
+
+Both share a `h-10` header in `text-xs font-medium uppercase tracking-wider`.
+
 ## Tab Patterns
 
 ### Filter Tabs (Wedding CRM)
@@ -215,13 +244,13 @@ Count badge on navigation items:
 
 ## Navigation Comparison Table
 
-| Property | Wedding CRM | DailyBrief.AI |
-|----------|-------------|---------------|
-| Type | Top navbar | Left sidebar + top navbar |
-| Background | Gradient sage green | Dark (#0a0a0a) |
-| Active indicator | White bg overlay | Blue border + bg tint |
-| Collapse | Mobile: stacks vertically | Desktop: 256px → 64px |
-| Filters | Pill tabs below content | Embedded in top navbar |
+| Property | Wedding CRM | DailyBrief.AI | Vector RAG |
+|----------|-------------|---------------|-----------|
+| Type | Top navbar | Left sidebar + top navbar | Top header (tabs) + dual chat sidebars |
+| Background | Gradient sage green | Dark (#0a0a0a) | Pure black (#000000) |
+| Active indicator | White bg overlay | Blue border + bg tint | Raised chip (6% white bg + border) |
+| Collapse | Mobile: stacks vertically | Desktop: 256px → 64px | Chat sidebars user-toggled (280/400px → 0) |
+| Filters | Pill tabs below content | Embedded in top navbar | Dashboard filter chips (14px pill) |
 
 ## How to Apply Navigation
 
@@ -243,3 +272,4 @@ Count badge on navigation items:
 - Truncated titles with ellipsis
 - Active session highlighted
 - New chat button in sidebar header
+- Or (Vector RAG): a slim top header with tab nav + two independently toggleable sidebars — history (left) and retrieved sources (right) — each animating width/opacity rather than snapping

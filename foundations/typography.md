@@ -1,14 +1,14 @@
 # Typography
 
-Font pairings, size scales, weights, and OpenType features across all four sites.
+Font pairings, size scales, weights, and OpenType features across all five sites.
 
 ## Font Families
 
-| Role | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|------|-------------|---------------|-------------|--------------|
-| Body | System stack | Inter | Inter | Inter |
-| Mono | `ui-monospace` | JetBrains Mono | — | JetBrains Mono |
-| Loading | None (system) | Google Fonts | Google Fonts | Google Fonts |
+| Role | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|------|-------------|---------------|-------------|--------------|------------|
+| Body | System stack | Inter | Inter | Inter | Inter |
+| Mono | `ui-monospace` | JetBrains Mono | — | JetBrains Mono | JetBrains Mono |
+| Loading | None (system) | Google Fonts | Google Fonts | Google Fonts | **Self-hosted woff2** |
 
 ### Font Stacks
 
@@ -26,16 +26,37 @@ font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 /* Not A Doc AI - Most complete stack */
 font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
 font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
+
+/* Vector RAG - identical stack to Not A Doc, but self-hosted (no Google Fonts) */
+font-family: 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+font-family: 'JetBrains Mono', 'SF Mono', Monaco, monospace;
 ```
 
-**Pattern:** Three of four sites use Inter as the primary font. Inter's clean geometry pairs well with both dark and light backgrounds. JetBrains Mono appears in both data-heavy apps (DailyBrief, Not A Doc AI) for code and data display. Wedding CRM skips custom fonts entirely for the fastest possible load.
+**Pattern:** Four of five sites use Inter as the primary font. Inter's clean geometry pairs well with both dark and light backgrounds. JetBrains Mono appears in all three data-heavy apps (DailyBrief, Not A Doc AI, Vector RAG) for code and data display. Wedding CRM skips custom fonts entirely for the fastest possible load.
+
+**Self-hosted fonts (Vector RAG):** Unlike the others, Vector RAG cannot pull from Google Fonts — it deploys on isolated networks that block external domains. Both families ship as single **variable** `woff2` files served from `/static/fonts/` with `font-display: swap`:
+
+```css
+@font-face {
+  font-family: 'Inter';
+  font-weight: 100 900;                 /* one variable file covers all weights */
+  font-display: swap;
+  src: url('/static/fonts/inter-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family: 'JetBrains Mono';
+  font-weight: 100 800;
+  font-display: swap;
+  src: url('/static/fonts/jetbrains-mono-latin.woff2') format('woff2');
+}
+```
 
 ## OpenType Features
 
-Only Not A Doc AI enables Inter's alternate character forms:
+Not A Doc AI **and Vector RAG** enable Inter's alternate character forms (identical settings):
 
 ```css
-/* Not A Doc AI - Inter character alternates */
+/* Not A Doc AI / Vector RAG - Inter character alternates */
 body {
   font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
   -webkit-font-smoothing: antialiased;
@@ -56,38 +77,38 @@ These alternates make Inter feel more geometric and modern — a good match for 
 
 ### Headings
 
-| Element | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|---------|-------------|---------------|-------------|--------------|
-| Page title (h1) | 1.8rem / 400 | Varies by page | 2.5rem / 700 | — |
-| Section title (h2) | 1rem / 500 | — | 2rem / 700 | — |
-| Card title (h3) | 1rem / 500 | — | — | — |
-| Navbar brand | 1.5rem / 300 | — | 0.65rem / 600 | — |
+| Element | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|---------|-------------|---------------|-------------|--------------|------------|
+| Page title (h1) | 1.8rem / 400 | Varies by page | 2.5rem / 700 | — | 3rem / 700 (landing greeting) |
+| Section title (h2) | 1rem / 500 | — | 2rem / 700 | — | 13px / 600 (card head) |
+| Card title (h3) | 1rem / 500 | — | — | — | 13px / 600 |
+| Navbar brand | 1.5rem / 300 | — | 0.65rem / 600 | — | 1.125rem (`text-lg`) / 600 |
 
 **Pattern:** Wedding CRM uses lighter weights (300-400) for a refined feel. Map Creator uses heavy weights (700) for visual impact. DailyBrief uses Tailwind utility classes rather than fixed sizes.
 
 ### Body & UI Text
 
-| Element | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|---------|-------------|---------------|-------------|--------------|
-| Body text | Default / 1.6 lh | Default / 1.5 lh | 0.9rem / 1.6 lh | Default |
-| Labels | — | — | 0.7rem / 600 | 0.75rem / 500 |
-| Badges | 0.75rem / 500 | — | — | 0.75rem / 500 |
-| Table headers | 0.85rem / 500 | — | — | — |
-| Small text | 0.8rem | — | 0.6-0.65rem | — |
-| Chat message | 14px / 1.65 lh | — | — | — |
-| Chat expanded | 15px / 1.7 lh | — | — | — |
+| Element | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|---------|-------------|---------------|-------------|--------------|------------|
+| Body text | Default / 1.6 lh | Default / 1.5 lh | 0.9rem / 1.6 lh | Default | 14px (`text-sm`) |
+| Labels | — | — | 0.7rem / 600 | 0.75rem / 500 | 11px uppercase / mono 9-10px |
+| Badges | 0.75rem / 500 | — | — | 0.75rem / 500 | 0.75rem (`text-xs`) / 500 |
+| Table headers | 0.85rem / 500 | — | — | — | `text-xs` uppercase / 500 |
+| Small text | 0.8rem | — | 0.6-0.65rem | — | `text-xs` (12px) |
+| Chat message | 14px / 1.65 lh | — | — | — | 14px (`text-sm`) |
+| Chat expanded | 15px / 1.7 lh | — | — | — | markdown / 1.6 lh |
 
 ## Weight Scale
 
-| Weight | Wedding CRM | Map Creator | DailyBrief.AI | Not A Doc AI |
-|--------|-------------|-------------|---------------|--------------|
-| 300 (Light) | Navbar brand, big numbers | Imported | — | — |
-| 400 (Regular) | Page headers, body | Body text | Body | Body |
-| 500 (Medium) | Card titles, buttons, badges | Theme names, quality | — | Badges |
-| 600 (Semibold) | Chat roles, guide headings | Labels, buttons, headings | — | — |
-| 700 (Bold) | — | h1, h2 | — | — |
+| Weight | Wedding CRM | Map Creator | DailyBrief.AI | Not A Doc AI | Vector RAG |
+|--------|-------------|-------------|---------------|--------------|------------|
+| 300 (Light) | Navbar brand, big numbers | Imported | — | — | — |
+| 400 (Regular) | Page headers, body | Body text | Body | Body | Body, chat |
+| 500 (Medium) | Card titles, buttons, badges | Theme names, quality | — | Badges | Labels, badges, nav |
+| 600 (Semibold) | Chat roles, guide headings | Labels, buttons, headings | — | — | Wordmark, card/section titles |
+| 700 (Bold) | — | h1, h2 | — | — | Landing greeting, KPI/stat values |
 
-**Pattern:** Wedding CRM spans 300-500 (light and airy). Map Creator uses 300-700 (high contrast between labels and headings). The data apps (DailyBrief, Not A Doc) keep weights simple at 400-500.
+**Pattern:** Wedding CRM spans 300-500 (light and airy). Map Creator uses 300-700 (high contrast between labels and headings). The data apps (DailyBrief, Not A Doc) keep weights simple at 400-500; Vector RAG reaches 700 but only for the hero greeting and numeric KPI values.
 
 ## Letter Spacing
 
@@ -105,10 +126,10 @@ These alternates make Inter feel more geometric and modern — a good match for 
 
 | Context | Value | Used By |
 |---------|-------|---------|
-| Body text | 1.6 | Wedding CRM, Map Creator |
+| Body text | 1.6 | Wedding CRM, Map Creator, Vector RAG (markdown) |
 | Chat messages | 1.65 (normal), 1.7 (expanded) | Wedding CRM |
 | Code blocks | 1.5 | Wedding CRM (chat) |
-| Compact UI | 1.3-1.4 | Map Creator (cheat sheet) |
+| Compact UI | 1.3-1.4 | Map Creator (cheat sheet), Vector RAG (dashboard 1.4-1.55) |
 
 ## Text Transforms
 

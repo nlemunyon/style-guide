@@ -1,18 +1,19 @@
 # Chat Interfaces
 
-Widget-based chat (Wedding CRM) vs full-page chat (Not A Doc AI), with component patterns for both approaches.
+Widget-based chat (Wedding CRM) vs full-page chat (Not A Doc AI, Vector RAG), with component patterns for each approach.
 
 ## Architecture Comparison
 
-| Feature | Wedding CRM | Not A Doc AI |
-|---------|-------------|--------------|
-| Layout | Floating widget (overlay) | Full-page panel |
-| Expand | Widget → fullscreen | Always full-page |
-| Sidebar | Past conversations (expanded only) | Stats panel |
-| Tech | Vanilla JS + SSE streaming | React + Framer Motion |
-| Input | Textarea in wrapper | Textarea with suggestions |
-| Messages | Role labels above text | Directional entrance animations |
-| AI features | 3-agent routing, context badge | Order results table, validation badges |
+| Feature | Wedding CRM | Not A Doc AI | Vector RAG |
+|---------|-------------|--------------|------------|
+| Layout | Floating widget (overlay) | Full-page panel | Full-page, header + dual sidebars |
+| Expand | Widget → fullscreen | Always full-page | Always full-page |
+| Sidebar | Past conversations (expanded only) | Stats panel | History (left, 280px) + source docs (right, 400px) |
+| Tech | Vanilla JS + SSE streaming | React + Framer Motion | React + Framer Motion + SSE streaming |
+| Input | Textarea in wrapper | Textarea with suggestions | Textarea in wrapper + suggestions |
+| Messages | Role labels above text | Directional entrance animations | Directional entrance animations |
+| Welcome state | Icon + prompt grid | Suggestion buttons | **Animated SVG world-map** + cycling suggestions |
+| AI features | 3-agent routing, context badge | Order results table, validation badges | RAG citations, inline charts, PDF export |
 
 ## Message Bubbles
 
@@ -102,6 +103,27 @@ export const assistantMessage = {
 }
 ```
 
+### Vector RAG - Minimal Directional Messages
+
+Vector RAG shares Not A Doc AI's exact `userMessage` / `assistantMessage` variants but styles the bubbles more sparsely — no filled user bubble, just alignment, width, and a muted italic user voice so the assistant's answer dominates:
+
+```jsx
+/* User: right-aligned, narrow, muted italic — no background fill */
+<div className="flex justify-end">
+  <div className="max-w-[90%] italic" style={{ color: '#707070' }}>{content}</div>
+</div>
+
+/* Assistant: left-aligned, wide, full markdown render */
+<div className="flex justify-start">
+  <div className="max-w-[95%]">{markdown}</div>
+</div>
+
+/* Streaming caret while tokens arrive */
+<span className="inline-block w-1.5 h-4 bg-accent animate-pulse" />
+```
+
+New user turns get extra `pt-8` lead-in so each exchange reads as a fresh block.
+
 ## Typing Indicators
 
 ### Wedding CRM
@@ -162,6 +184,10 @@ export const assistantMessage = {
 ```
 
 **Comparison:** CRM uses gray dots (6px) with scale + opacity. Not A Doc AI uses accent-colored dots (8px) with scale (1.1x) + opacity. Both use 1.4s cycles with staggered delays.
+
+### Vector RAG
+
+Vector RAG skips the three-dot pattern entirely — its "thinking" state is a single word that fades in and gently bounces on the y-axis (`role="status"`, `aria-live="polite"`), `text-base` in `#e0e0e0`. During actual token streaming it shows the pulsing caret (see above) rather than a separate indicator.
 
 ## Chat Input
 
@@ -231,6 +257,23 @@ const suggestions = [
 ))}
 ```
 
+### Vector RAG - Bottom Wrapper + Focus Ring
+
+A pill-less rounded wrapper pinned to the bottom, dark-on-black, that lights up its border and casts a soft accent ring on focus:
+
+```jsx
+<div className="shrink-0 border-t border-border-default bg-bg-page px-4 py-3">
+  <div className="flex items-end gap-2 rounded-xl px-4 py-2.5"
+       style={{ background: '#0d0d0d', border: '1px solid #1f1f1f' }}
+       /* on focus-within: borderColor #5c9ece; boxShadow 0 0 0 2px rgba(92,158,206,0.12) */>
+    <textarea className="flex-1 resize-none bg-transparent text-sm text-text-primary"
+              /* auto-grows to 200px max */ />
+    {/* Send: h-8 w-8 rounded-lg, bg #5c9ece / text #000, disabled #1a1a1a/#555 */}
+    {/* While streaming, Send swaps to a Stop button: bg rgba(239,68,68,0.15) / #ef4444 */}
+  </div>
+</div>
+```
+
 ## Welcome State
 
 ### Wedding CRM
@@ -282,6 +325,25 @@ const suggestions = [
 
 .welcome-prompt:hover { border-color: #bbb; background: #fafafa; }
 ```
+
+### Vector RAG - Animated World-Map Welcome ★
+
+Vector RAG's empty state is its signature moment: a full-bleed **pure-SVG** world map (Pacific-centered equirectangular, no canvas/D3) sits behind a centered greeting and a carousel of suggestions that cross-fades every 7s. Hotspots pulse and fire arcing connection lines in a 45s loop.
+
+```jsx
+<div className="relative flex flex-1 flex-col items-center justify-center px-4">
+  <WorldMapBackground />                    {/* absolute inset-0, pointer-events-none */}
+  <div className="relative z-10 text-center">
+    <h2 className="mb-3 font-bold tracking-tight" style={{ fontSize: '3rem', color: '#e6edf3' }}>
+      Vector <span style={{ color: '#b0c4d4' }}>RAG</span>
+    </h2>
+    <p className="text-sm max-w-md" style={{ color: '#848d97' }}>{subtitle}</p>
+  </div>
+  {/* cycling suggestions: AnimatePresence mode="wait", opacity/y 8→0, 0.3s, every 7000ms */}
+</div>
+```
+
+The map strokes render in a muted blue-gray `#3a6d8c` (never the UI accent), with the Asia-Pacific region drawn at higher opacity than the rest to focus attention. Each hotspot animates a solid dot (`opacity 0.15→0.45→0.15`), an expanding ring (`scale 0.3→1.8`, `opacity 0.45→0`), and a quadratic-Bézier arc drawn via `strokeDashoffset`. `useReducedMotion()` drops all motion to flat dots. Full projection + Framer Motion code lives in **[Maps & Data Viz](maps-and-data-viz.md#animated-svg-world-map-vector-rag)**.
 
 ## Widget Expand/Collapse
 
@@ -390,3 +452,10 @@ The chat renders markdown with styled elements:
 - Suggestion buttons on initial state
 - Stagger animations for new content
 - Typing indicator with accent-colored dots
+
+### For an intel/RAG chat (Vector RAG):
+- Full-page: fixed header, centered `max-w-7xl` message column, toggleable history (280px) + source-docs (400px) sidebars
+- Ambient hero motion (animated SVG map) behind the empty-state prompt, gone once a conversation starts
+- Muted, un-filled user bubbles so the assistant's markdown answer dominates
+- A single pulsing caret for streaming instead of a separate typing indicator
+- Reserve a background-only accent (`#3a6d8c`) so the ambient viz never competes with foreground controls

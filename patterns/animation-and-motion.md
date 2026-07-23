@@ -1,6 +1,6 @@
 # Animation & Motion
 
-CSS keyframes, Framer Motion presets, easing functions, and duration standards across all four sites.
+CSS keyframes, Framer Motion presets, easing functions, and duration standards across all five sites.
 
 ## Animation Libraries
 
@@ -10,6 +10,7 @@ CSS keyframes, Framer Motion presets, easing functions, and duration standards a
 | DailyBrief.AI | CSS + Tailwind keyframes | Config-defined animations |
 | Map Creator | CSS only | Transitions + keyframes |
 | Not A Doc AI | Framer Motion + CSS | Declarative variants + keyframes |
+| Vector RAG | Framer Motion + SVG + CSS | Variants + SVG path/pulse animation + keyframes |
 
 ## CSS Keyframes
 
@@ -140,6 +141,26 @@ Used by Wedding CRM and Map Creator for loading spinners:
 /* Duration: 30s linear infinite — pauses on hover */
 ```
 
+### Map Ping + Ghost Shimmer (Vector RAG)
+
+The dashboard signals live/fresh data with an expanding box-shadow ping, and loading cards sweep a shimmer:
+
+```css
+/* Fresh event dot / live indicator */
+@keyframes ap2ping {
+  0%        { box-shadow: 0 0 0 0  color-mix(in srgb, var(--pc) 55%, transparent); }
+  70%, 100% { box-shadow: 0 0 0 11px transparent; }
+}   /* 2.6s ease-out infinite (live dot: 2s) */
+
+/* Skeleton shimmer on .card::after while loading */
+@keyframes ghostSweep {
+  from { transform: translateX(-100%); }
+  to   { transform: translateX(100%); }
+}   /* 1.25s ease-in-out infinite; gradient = accent 9% → transparent */
+```
+
+The landing map's pulses/arcs are **not** CSS keyframes — they're Framer Motion on SVG elements (see below).
+
 ## Framer Motion Presets (Not A Doc AI)
 
 Not A Doc AI centralizes all animation variants in a `motion.js` utility file:
@@ -206,6 +227,26 @@ export const buttonHover = { y: -1, transition: { duration: 0.15 } }
 export const buttonTap = { scale: 0.98, transition: { duration: 0.1 } }
 ```
 
+**Vector RAG uses this exact variant library** (same `smoothOut` easing, same `userMessage`/`assistantMessage`/`fadeInUp`/`staggerContainer`/`buttonHover`/`buttonTap`), plus `slideInLeft/Right`, `scaleIn`, `modalOverlay`/`modalContent`, and a `sidebarVariants` that animates `width: 280 ↔ 0`.
+
+## Framer Motion on SVG (Vector RAG)
+
+Vector RAG's signature is a landing-map animation built by animating **SVG attributes** with Framer Motion — arcs draw via `strokeDashoffset`, dots breathe via `opacity`, rings expand via `scale`. One 45s loop across 15 hotspots (`stepDuration = 3s`):
+
+```jsx
+// Arc: draws in over 1s, holds, fades — 2s active window, repeats after 43s
+<motion.path stroke="#3a6d8c" strokeWidth={0.8} pathLength={1} strokeDasharray="1"
+  animate={{ strokeDashoffset: [1, 0, 0], opacity: [0, 0.35, 0] }}
+  transition={{ duration: 2, times: [0, 0.5, 1], ease: 'easeInOut', delay: i*3, repeat: Infinity, repeatDelay: 43 }} />
+
+// Ring: expands + fades, synced to its incoming arc via pulseDelay = (i-1)*3 + 1
+<motion.circle r={8} fill="none" stroke="#3a6d8c"
+  initial={{ scale: 0.3, opacity: 0.45 }} animate={{ scale: 1.8, opacity: 0 }}
+  transition={{ duration: 2, ease: 'easeOut', delay: pulseDelay, repeat: Infinity, repeatDelay: 43 }} />
+```
+
+A `useReducedMotion()` guard strips every arc/ring and renders flat static dots — the accessible fallback for the whole effect. See [Maps & Data Viz](maps-and-data-viz.md#animated-svg-world-map-vector-rag) for the full projection.
+
 ### Usage Pattern
 
 ```jsx
@@ -224,13 +265,14 @@ export const buttonTap = { scale: 0.98, transition: { duration: 0.1 } }
 
 ## Hover Transitions
 
-| Element | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI |
-|---------|-------------|---------------|-------------|--------------|
-| Card | — | Border brightens | `translateY(-8px)` | Border brightens |
-| Button | bg-color change | — | `translateY(-2px)` + shadow boost | `y: -1` (FM) |
-| Gallery item | — | — | `translateY(-4px)` + shadow | — |
-| Chat toggle | `translateY(-3px) scale(1.05)` | — | — | — |
-| Nav link | bg highlight | — | — | — |
+| Element | Wedding CRM | DailyBrief.AI | Map Creator | Not A Doc AI | Vector RAG |
+|---------|-------------|---------------|-------------|--------------|------------|
+| Card | — | Border brightens | `translateY(-8px)` | Border brightens | Border brightens (8%→14%) |
+| Button | bg-color change | — | `translateY(-2px)` + shadow boost | `y: -1` (FM) | `y: -1` (FM) |
+| Gallery item | — | — | `translateY(-4px)` + shadow | — | — |
+| Chat toggle | `translateY(-3px) scale(1.05)` | — | — | — | — |
+| Nav link | bg highlight | — | — | — | text-color shift |
+| Chart bar | — | — | — | — | opacity 0.42 → 1.0 |
 
 ## Duration Standards
 
@@ -244,9 +286,12 @@ export const buttonTap = { scale: 0.98, transition: { duration: 0.1 } }
 | 0.7s | Spinner rotation | Wedding CRM |
 | 1s | Spinner rotation | Map Creator |
 | 1.4s | Typing indicator cycle | Wedding CRM, Not A Doc AI |
-| 2s | Pulse animations | DailyBrief, Not A Doc AI |
+| 2s | Pulse animations | DailyBrief, Not A Doc AI, Vector RAG (map dot/ring, live dot) |
 | 2.5s | Attention ring pulse | Wedding CRM |
+| 2.6s | Fresh-event ping | Vector RAG |
+| 7s | Welcome suggestion carousel | Vector RAG |
 | 30s | Banner infinite scroll | Map Creator |
+| 45s | Landing map hotspot loop | Vector RAG |
 
 ## Easing Functions
 
@@ -256,8 +301,10 @@ export const buttonTap = { scale: 0.98, transition: { duration: 0.1 } }
 | `ease-out` | `ease-out` | Enter animations (all sites) |
 | `ease-in-out` | `ease-in-out` | Pulse/glow loops |
 | `linear` | `linear` | Spinners, infinite scroll |
-| `smoothOut` | `cubic-bezier(0, 0, 0.2, 1)` | Framer Motion (Not A Doc AI) |
+| `smoothOut` | `cubic-bezier(0, 0, 0.2, 1)` | Framer Motion (Not A Doc AI, Vector RAG) |
 | Custom | `cubic-bezier(0.4, 0, 0.2, 1)` | Chat toggle (Wedding CRM) |
+
+> **Reduced motion:** Vector RAG ships a global `@media (prefers-reduced-motion: reduce)` rule that clamps all animation/transition durations to `0.01ms`, and its landing map has a dedicated `useReducedMotion()` fallback that removes arcs/rings entirely. When adding signature motion, always design the static fallback alongside it.
 
 ## How to Apply Motion
 
